@@ -1,0 +1,29 @@
+services:
+    demo-app:
+      image: demo-app-image
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.demo-app.rule=(Host(`localhost`) && PathPrefix(`/hello`))"
+        - "traefik.http.routers.demo-app.tls=true"
+        - "traefik.http.routers.demo-app.entrypoints=websecure"
+      depends_on:
+        - traefik
+
+    traefik:
+      image: "traefik:v3.0"
+      command:
+        # - "--log.level=DEBUG" #
+        - "--providers.docker=true"
+        - "--entrypoints.web.address=:80"
+        - "--entrypoints.websecure.address=:443"
+        - "--providers.file.directory=/etc/traefik"
+        - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+        - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+        - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        - "./certs:/etc/ssl/certs"
+        - "./certs-traefik.yml:/etc/traefik/certs-traefik.yml"
