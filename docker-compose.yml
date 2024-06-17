@@ -3,7 +3,7 @@ services:
       image: demo-app-image
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.demo-app.rule=(Host(`localhost`) && PathPrefix(`/hello`))"
+        - "traefik.http.routers.demo-app.rule=(Host(`demo.localhost`) && PathPrefix(`/hello`))"
         - "traefik.http.routers.demo-app.tls=true"
         - "traefik.http.routers.demo-app.entrypoints=websecure"
       depends_on:
